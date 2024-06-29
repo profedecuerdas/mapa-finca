@@ -2,9 +2,13 @@
 
 import xml.etree.ElementTree as ET
 import csv
-
+import argparse
+parser = argparse.ArgumentParser(description='Este es un script de ejemplo.')
+parser.add_argument('archivoentrada', type=str, help='Una cadena de texto.')
+parser.add_argument('archivosalida', type=str, help='Una cadena de texto.')
+args = parser.parse_args()
 # Parsear el archivo .kml
-tree = ET.parse('jun1.kml')
+tree = ET.parse(args.archivoentrada)
 root = tree.getroot()
 
 # Espacio de nombres para el archivo .kml
@@ -17,16 +21,16 @@ data = []
 for placemark in root.findall('.//kml:Placemark', namespace):
     name = placemark.find('kml:name', namespace).text
     coordinates = placemark.find('.//kml:coordinates', namespace).text.strip()
-    color = placemark.find('.//kml:value', namespace).text
+    #color = placemark.find('.//kml:value', namespace).text
     
     # Separar las coordenadas en latitud, longitud y altitud
-    lon, lat = coordinates.split(',')
+    lon, lat, alt = coordinates.split(',')
     
     # Agregar los datos a la lista
-    data.append([name, lat, lon, color])
+    data.append([name, lat, lon])
 
 # Escribir los datos en un archivo CSV
-with open('fincajun1.csv', 'w', newline='') as csvfile:
+with open(args.archivosalida, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     
     # Escribir la cabecera del CSV
@@ -36,3 +40,4 @@ with open('fincajun1.csv', 'w', newline='') as csvfile:
     csvwriter.writerows(data)
 
 print("Datos guardados en 'fincajun1.csv'")
+  

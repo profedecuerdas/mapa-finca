@@ -3,7 +3,7 @@ import pandas as pd
 
 from folium import Map, Html, Element
 from folium.plugins import FloatImage
-version="versión: Junio 2 de 2024"
+version="versión: Junio 28 de 2024"
 
 title_html= '''
 <div style="position:fixed;
@@ -32,7 +32,7 @@ center_lat=5.2494855 + unmetro*10
 center_lon=-75.7373283 - unmetro*30
 area_size=360
 grid_spacing=10
-data = pd.read_csv("fincajun1.csv")
+data = pd.read_csv("28.csv")
 ErsiWorldImagery = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 m = folium.Map(location = [center_lat, center_lon ],max_zoom = 30 , zoom_start = 19, tiles = ErsiWorldImagery, attr="Ersi"
        )
@@ -57,6 +57,9 @@ for i in range (0 , area_size + grid_spacing, grid_spacing):
 
 
 #dibujos desde archivo .csv
+gn = []
+arreglo_amarilla_leonidas = []
+arreglo_amarilla_guadual = []
 arreglo_calera = []
 cal_amarilla = []
 amarilla_norte = []
@@ -220,6 +223,12 @@ folium.Marker(location = cerrocorazon, popup="cerro Corazón").add_to(m)
 
 for index, row in data.iterrows():
 
+    if row['Etiqueta'] == "gn":
+        gn.append([row['Latitud'],row['Longitud']])
+    if row['Etiqueta'] == "amarilla_leonidas":
+        arreglo_amarilla_leonidas.append([row['Latitud'],row['Longitud']])
+    if row['Etiqueta'] == "amarilla_guadual":
+        arreglo_amarilla_guadual.append([row['Latitud'],row['Longitud']])
     if row['Etiqueta'] == "amarilla_calera":
         arreglo_calera.append([row['Latitud'],row['Longitud']])
     elif row['Etiqueta'] == "cal_amarilla":
@@ -241,6 +250,9 @@ for index, row in data.iterrows():
             ).add_to(m)
 
 
+folium.PolyLine(locations=gn, color="brown", weight=4, popup="margen norte carretera").add_to(m)
+folium.PolyLine(locations=arreglo_amarilla_leonidas, color="yellow", weight=4, popup="amarilla leonidas").add_to(m)
+folium.PolyLine(locations=arreglo_amarilla_guadual, color="yellow", weight=4, popup="amarilla guadual").add_to(m)
 folium.PolyLine(locations=arreglo_calera, color="yellow", weight=4, popup="amarilla calera norte").add_to(m)
 folium.PolyLine(locations=cal_amarilla, color="yellow", weight=4, popup="amarilla calera sur").add_to(m)
 folium.PolyLine(locations=amarilla_norte, color="yellow", weight=4, popup="amarilla oso occidente").add_to(m)
@@ -251,4 +263,4 @@ folium.PolyLine(locations=[[5.249523-(unmetro*10) , -75.73854-(unmetro*10)],[5.2
 folium.PolyLine(locations=aguitados, color="blue", weight=4, popup="aguita").add_to(m)
 
 m.get_root().html.add_child(folium.Element(title_html))
-m.save("a.html")
+m.save("mapajun28.html")
